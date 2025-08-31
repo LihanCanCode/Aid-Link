@@ -140,7 +140,7 @@ const Navbar = () => {
                   <button
                     onClick={() => {
                       // Optionally call backend logout endpoint
-                      fetch('http://localhost:8080/api/auth/logout', { method: 'POST', credentials: 'include' });
+                      fetch('http://localhost:8082/api/auth/logout', { method: 'POST', credentials: 'include' });
                       localStorage.removeItem('isSignedIn');
                       window.location.href = '/login';
                     }}
