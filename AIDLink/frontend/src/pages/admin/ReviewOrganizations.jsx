@@ -5,7 +5,7 @@ export default function ReviewOrganizations() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/admin/pending-organizations')
+    fetch('https://aid-link-11.onrender.com/api/admin/pending-organizations')
       .then(res => res.json())
       .then(data => {
         setOrgs(data);
@@ -14,7 +14,7 @@ export default function ReviewOrganizations() {
   }, []);
 
   const approveOrg = async (id) => {
-    await fetch(`/api/admin/approve-organization/${id}`, { method: 'POST' });
+    await fetch(`https://aid-link-11.onrender.com/api/admin/approve-organization/${id}`, { method: 'POST' });
     setOrgs(orgs.filter(org => org.id !== id));
   };
 

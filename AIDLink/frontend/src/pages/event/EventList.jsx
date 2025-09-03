@@ -34,7 +34,7 @@ const EventList = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-  const response = await fetch('/api/admin/events');
+  const response = await fetch('https://aid-link-11.onrender.com/api/admin/events');
         console.log(events.map(e => e.isOngoing));
         //const response = await fetch('/events.json');
         if (!response.ok) {

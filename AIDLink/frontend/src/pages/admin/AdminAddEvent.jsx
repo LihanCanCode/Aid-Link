@@ -31,7 +31,7 @@ export default function AdminAddEvent() {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/admin/events', {
+  const res = await fetch('https://aid-link-11.onrender.com/api/admin/events', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)

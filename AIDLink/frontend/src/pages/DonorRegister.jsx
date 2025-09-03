@@ -24,7 +24,7 @@ const DonorRegister = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const response = await fetch('/api/user/register', {
+  const response = await fetch('https://aid-link-11.onrender.com/api/user/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

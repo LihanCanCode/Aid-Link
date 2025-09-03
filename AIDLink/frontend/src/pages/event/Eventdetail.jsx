@@ -14,7 +14,7 @@ const Eventdetail = () => {
     const fetchEventDetails = async () => {
       try {
        //  const responst=await fetch()
-       const response = await fetch(`/api/admin/events/${eventId}`);
+  const response = await fetch(`https://aid-link-11.onrender.com/api/admin/events/${eventId}`);
         if (!response.ok) {
           throw new Error('Failed to fetch event');
         }
