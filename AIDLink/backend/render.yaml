@@ -1,0 +1,17 @@
+services:
+  aidlink-backend:
+    type: web
+    name: aidlink-backend
+    env: docker
+    repo: https://github.com/MultazamMahmud12/AIDLink_JavaBackend
+    branch: main
+    rootDir: AIDLink/backend
+    plan: free
+    autoDeploy: true
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: PORT
+        value: 8082
+      # Add your MongoDB connection string and any other secrets here
+      # - key: SPRING_DATA_MONGODB_URI
+      #   value: <your-mongodb-uri>

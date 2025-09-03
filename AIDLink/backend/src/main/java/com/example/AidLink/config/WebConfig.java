@@ -14,8 +14,12 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5173") // frontend dev server
+                        .allowedOrigins(
+                            "http://localhost:5173", // frontend dev server
+                            "https://aidlink-2025.web.app" // production Firebase
+                        )
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
+                        .allowedHeaders("*")
                         .allowCredentials(true);
             }
         };
