@@ -97,11 +97,11 @@ const Banner = () => {
         <div className="text-center max-w-4xl mx-auto">
           {/* Main heading */}
           <h1 className="text-5xl md:text-7xl font-bold text-black mb-8 leading-tight">
-            Successful
+            From crisis to care,
             <br />
-            <span className="text-gray-800">fundraisers</span>
+            <span className="text-gray-800">for you,</span>
             <br />
-            <span className="text-gray-700">start here</span>
+            <span className="text-gray-700">with you .</span>
           </h1>
 
           {/* CTA Button */}
