@@ -19,19 +19,19 @@ public class EventService {
 		this.userRepository = userRepository;
 	}
 	// Update both event funding and user's donatedAmount
-	public Event updateEventFundingAndUserDonation(Integer eventId, int donationAmount, String userEmail) {
+	public Event updateEventFundingAndUserDonation(Integer eventId, Integer donationAmount, String userEmail) {
 		System.out.println("EventService: Updating event funding for event ID: " + eventId + " with amount: " + donationAmount);
 		Optional<Event> eventOptional = eventRepository.findById(eventId);
 		if (eventOptional.isPresent()) {
 			Event event = eventOptional.get();
-			int newCurrentFunding = event.getCurrentFunding() + donationAmount;
+			Integer newCurrentFunding = (event.getCurrentFunding() != null ? event.getCurrentFunding() : 0) + (donationAmount != null ? donationAmount : 0);
 			event.setCurrentFunding(newCurrentFunding);
 			eventRepository.save(event);
 
 			// Update user's donatedAmount
 			User user = userRepository.findByEmail(userEmail);
 			if (user != null) {
-				int newDonatedAmount = user.getDonatedAmount() + donationAmount;
+				int newDonatedAmount = user.getDonatedAmount() + (donationAmount != null ? donationAmount : 0);
 				user.setDonatedAmount(newDonatedAmount);
 				userRepository.save(user);
 				System.out.println("User " + userEmail + " donated. New donatedAmount: " + newDonatedAmount);
@@ -56,20 +56,20 @@ public class EventService {
 	public Optional<Event> getEventById(Integer id) {
 		return eventRepository.findById(id);
 	}
-	
-	public Event updateEventFunding(Integer eventId, int donationAmount) {
+
+	public Event updateEventFunding(Integer eventId, Integer donationAmount) {
 		System.out.println("EventService: Updating event funding for event ID: " + eventId + " with amount: " + donationAmount);
-		
+
 		Optional<Event> eventOptional = eventRepository.findById(eventId);
 		if (eventOptional.isPresent()) {
 			Event event = eventOptional.get();
 			System.out.println("EventService: Found event: " + event.getId() + " - " + event.getTitle());
 			System.out.println("EventService: Current funding: " + event.getCurrentFunding() + ", Funding goal: " + event.getFundingGoal());
-			
+
 			// Add the donation amount to the current funding
-			int newCurrentFunding = event.getCurrentFunding() + donationAmount;
+			Integer newCurrentFunding = (event.getCurrentFunding() != null ? event.getCurrentFunding() : 0) + (donationAmount != null ? donationAmount : 0);
 			event.setCurrentFunding(newCurrentFunding);
-			
+
 			System.out.println("EventService: New funding amount: " + newCurrentFunding);
 			return eventRepository.save(event);
 		} else {

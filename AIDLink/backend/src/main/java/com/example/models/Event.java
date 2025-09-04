@@ -14,24 +14,24 @@ import lombok.NoArgsConstructor;
 
 public class Event {
     @Id
-    private String id;
+    private Integer id;
     private String title;
     private String description;
     private String category;
     private boolean isOngoing;
-    private int estimatedAffectedPeople;
+    private Integer estimatedAffectedPeople;
     private String severity;
     private String location;
     private String startDate;
     private String endDate;
     private String coverImage;
     private String urgencyLevel;
-    private int fundingGoal;
-    private int currentFunding;
+    private Integer fundingGoal;
+    private Integer currentFunding;
 
     // Getters and Setters
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
@@ -45,8 +45,8 @@ public class Event {
     public boolean isOngoing() { return isOngoing; }
     public void setOngoing(boolean ongoing) { isOngoing = ongoing; }
 
-    public int getEstimatedAffectedPeople() { return estimatedAffectedPeople; }
-    public void setEstimatedAffectedPeople(int estimatedAffectedPeople) { this.estimatedAffectedPeople = estimatedAffectedPeople; }
+    public Integer getEstimatedAffectedPeople() { return estimatedAffectedPeople; }
+    public void setEstimatedAffectedPeople(Integer estimatedAffectedPeople) { this.estimatedAffectedPeople = estimatedAffectedPeople; }
 
     public String getSeverity() { return severity; }
     public void setSeverity(String severity) { this.severity = severity; }
@@ -66,9 +66,9 @@ public class Event {
     public String getUrgencyLevel() { return urgencyLevel; }
     public void setUrgencyLevel(String urgencyLevel) { this.urgencyLevel = urgencyLevel; }
 
-    public int getFundingGoal() { return fundingGoal; }
-    public void setFundingGoal(int fundingGoal) { this.fundingGoal = fundingGoal; }
+    public Integer getFundingGoal() { return fundingGoal; }
+    public void setFundingGoal(Integer fundingGoal) { this.fundingGoal = fundingGoal; }
 
-    public int getCurrentFunding() { return currentFunding; }
-    public void setCurrentFunding(int currentFunding) { this.currentFunding = currentFunding; }
+    public Integer getCurrentFunding() { return currentFunding; }
+    public void setCurrentFunding(Integer currentFunding) { this.currentFunding = currentFunding; }
 }
