@@ -18,20 +18,36 @@ export default function AdminAddEvent() {
     currentFunding: '',
   });
   const [message, setMessage] = useState('');
+
   const navigate = useNavigate();
 
-  const handleChange = e => {
-    const { name, value, type, checked } = e.target;
-    setForm({
-      ...form,
-      [name]: type === 'checkbox' ? checked : value
-    });
+  // Placeholder for Cloudinary upload (implement as needed)
+  const uploadCoverImageToCloudinary = async (file) => {
+    // Implement Cloudinary upload logic here and update form.coverImage with the URL
+    // Example:
+    // const url = await uploadToCloudinary(file);
+    // setForm({ ...form, coverImage: url });
   };
 
-  const handleSubmit = async e => {
+  const handleChange = (e) => {
+    const { name, value, type, checked, files } = e.target;
+    if (type === 'file') {
+      const file = files[0];
+      if (file) {
+        uploadCoverImageToCloudinary(file);
+      }
+    } else {
+      setForm({
+        ...form,
+        [name]: type === 'checkbox' ? checked : value
+      });
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-  const res = await fetch('https://aid-link-11.onrender.com/api/admin/events', {
+      const res = await fetch('https://aid-link-11.onrender.com/api/admin/events', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
