@@ -4,20 +4,20 @@ import { useNavigate } from 'react-router-dom';
 
 export default function AdminAddEvent() {
   const [form, setForm] = useState({
-    id: null, // Integer, let backend generate if null
+    id: null,
     title: '',
     description: '',
     category: '',
-    isOngoing: false, // boolean
-    estimatedAffectedPeople: '', // will convert to int on submit
+    isOngoing: false,
+    estimatedAffectedPeople: '',
     severity: '',
     location: '',
     startDate: '',
     endDate: '',
-    coverImage: '',
+    coverImage: '', // will be set to Cloudinary URL
     urgencyLevel: '',
-    fundingGoal: '', // will convert to int on submit
-    currentFunding: '', // will convert to int on submit
+    fundingGoal: '',
+    currentFunding: '',
   });
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
@@ -35,11 +35,9 @@ export default function AdminAddEvent() {
         [name]: type === 'checkbox' ? checked : value
       });
     }
-
-    // ...existing code...
   };
 
-  // Cloudinary config (replace with your values)
+  // Cloudinary config
   const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dqxcgemok/upload';
   const CLOUDINARY_UPLOAD_PRESET = 'AIDlink demo';
 
@@ -82,7 +80,7 @@ export default function AdminAddEvent() {
       });
       if (res.ok) {
         setMessage('Event added successfully!');
-        setTimeout(() => navigate('/admin/dashboard'), 1500);
+        setTimeout(() => navigate('/admin-dashboard'), 1500);
       } else {
         setMessage('Failed to add event');
       }
