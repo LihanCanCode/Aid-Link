@@ -13,7 +13,7 @@ export default function AdminLogin() {
   const handleSubmit = async e => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:8080/admin/auth/login', {
+  const res = await fetch('https://aid-link-11.onrender.com/admin/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
