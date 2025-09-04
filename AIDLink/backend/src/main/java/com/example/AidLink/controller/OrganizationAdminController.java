@@ -1,3 +1,4 @@
+
 package com.example.AidLink.controller;
 
 import java.util.ArrayList;
@@ -17,7 +18,6 @@ import com.example.models.Organization;
 @RestController
 @RequestMapping("/api/admin")
 // Duplicate class definition removed
-
 
 public class OrganizationAdminController {
     private final OrganizationRepository organizationRepository;
@@ -72,12 +72,22 @@ public class OrganizationAdminController {
     public List<Organization> getApprovedOrgsForEvent(@PathVariable Integer eventId) {
         return organizationRepository.findByRegistrationStatus_ApprovalStatusAndEventRegistrations_EventId("approved", eventId);
     }
-    
+
     // Get organization details by ID
     @GetMapping("/organizations/{id}")
     public ResponseEntity<Organization> getOrganizationById(@PathVariable String id) {
         return organizationRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    // Reject and delete organization from database
+    @PostMapping("/reject-organization/{id}")
+    public ResponseEntity<String> rejectOrganization(@PathVariable String id) {
+        Organization org = organizationRepository.findById(id).orElse(null);
+        if (org == null) return ResponseEntity.notFound().build();
+        // Delete the organization from database
+        organizationRepository.deleteById(id);
+        return ResponseEntity.ok("Organization rejected and deleted successfully");
     }
 }
