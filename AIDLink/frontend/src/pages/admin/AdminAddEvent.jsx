@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-export default function AdminAddEvent() {
-  const [form, setForm] = useState({
-    title: '',
-    description: '',
-    category: '',
-    location: '',
-    startDate: '',
-    endDate: '',
-    severity: '',
-    isOngoing: false,
-    estimatedAffectedPeople: '',
-    coverImage: '',
-    urgencyLevel: '',
-    fundingGoal: '',
+    try {
+      const res = await fetch('https://aid-link-11.onrender.com/api/admin/events', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      });
+      if (res.ok) {
+        setMessage('Event added successfully!');
+        setTimeout(() => navigate('/admin/dashboard'), 1500);
+      } else {
+        setMessage('Failed to add event');
+      }
+    } catch {
+      setMessage('Network error');
+    }
     currentFunding: '',
   });
   const [message, setMessage] = useState('');
