@@ -341,7 +341,7 @@ public class Organization {
         }
 
         public static class EventRegistration {
-            private String eventId;
+            private Integer eventId;
             private String eventTitle;
             private String registrationDate;
             private String status;
@@ -352,8 +352,8 @@ public class Organization {
             private String responseTime;
             private String notes;
             // Getters and setters
-            public String getEventId() { return eventId; }
-            public void setEventId(String eventId) { this.eventId = eventId; }
+            public Integer getEventId() { return eventId; }
+            public void setEventId(Integer eventId) { this.eventId = eventId; }
             public String getEventTitle() { return eventTitle; }
             public void setEventTitle(String eventTitle) { this.eventTitle = eventTitle; }
             public String getRegistrationDate() { return registrationDate; }

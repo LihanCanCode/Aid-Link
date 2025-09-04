@@ -56,13 +56,12 @@ public class OrganizationAdminController {
 
     // Register organization for an event (add EventRegistration)
     @PostMapping("/organizations/{orgId}/register-event/{eventId}")
-    public ResponseEntity<Organization> registerOrgForEvent(@PathVariable String orgId, @PathVariable String eventId) {
+    public ResponseEntity<Organization> registerOrgForEvent(@PathVariable String orgId, @PathVariable Integer eventId) {
         Organization org = organizationRepository.findById(orgId).orElse(null);
         if (org == null) return ResponseEntity.notFound().build();
         if (org.getEventRegistrations() == null) org.setEventRegistrations(new ArrayList<>());
         Organization.EventRegistration registration = new Organization.EventRegistration();
-    // Store eventId as String, as required by EventRegistration
-    registration.setEventId(eventId);
+        registration.setEventId(eventId);
         registration.setStatus("registered");
         org.getEventRegistrations().add(registration);
         organizationRepository.save(org);
