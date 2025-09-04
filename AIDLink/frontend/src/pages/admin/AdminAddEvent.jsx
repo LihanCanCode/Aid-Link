@@ -1,32 +1,48 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-    try {
-      const res = await fetch('https://aid-link-11.onrender.com/api/admin/events', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
-      });
-      if (res.ok) {
-        setMessage('Event added successfully!');
-        setTimeout(() => navigate('/admin/dashboard'), 1500);
-      } else {
-        setMessage('Failed to add event');
-      }
-    } catch {
-      setMessage('Network error');
-    }
+
+export default function AdminAddEvent() {
+  const [form, setForm] = useState({
+    title: '',
+    description: '',
+    category: '',
+    location: '',
+    startDate: '',
+    endDate: '',
+    severity: '',
+    isOngoing: false,
+    estimatedAffectedPeople: '',
+    coverImage: '',
+    urgencyLevel: '',
+    fundingGoal: '',
     currentFunding: '',
   });
   const [message, setMessage] = useState('');
-
   const navigate = useNavigate();
 
-  // Placeholder for Cloudinary upload (implement as needed)
+  // Cloudinary config
+  const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dqxcgemok/upload';
+  const CLOUDINARY_UPLOAD_PRESET = 'AIDlink demo';
+
   const uploadCoverImageToCloudinary = async (file) => {
-    // Implement Cloudinary upload logic here and update form.coverImage with the URL
-    // Example:
-    // const url = await uploadToCloudinary(file);
-    // setForm({ ...form, coverImage: url });
+    const data = new FormData();
+    data.append('file', file);
+    data.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+    try {
+      const res = await fetch(CLOUDINARY_URL, {
+        method: 'POST',
+        body: data
+      });
+      const result = await res.json();
+      if (result.secure_url) {
+        setForm(prev => ({ ...prev, coverImage: result.secure_url }));
+      } else {
+        setMessage('Failed to upload image');
+      }
+    } catch {
+      setMessage('Failed to upload image');
+    }
   };
 
   const handleChange = (e) => {
@@ -108,7 +124,18 @@ import { useNavigate } from 'react-router-dom';
           <input name="isOngoing" type="checkbox" checked={form.isOngoing} onChange={handleChange} style={{ accentColor: '#1976d2' }} /> Ongoing
         </label>
         <input name="estimatedAffectedPeople" type="number" value={form.estimatedAffectedPeople} onChange={handleChange} placeholder="Estimated Affected People" style={{ width: '100%', padding: 10, borderRadius: 6, border: '1px solid #bdbdbd', fontSize: 16 }} />
-        <input name="coverImage" value={form.coverImage} onChange={handleChange} placeholder="Cover Image URL" style={{ width: '100%', padding: 10, borderRadius: 6, border: '1px solid #bdbdbd', fontSize: 16 }} />
+        <label style={{ fontWeight: 500, marginBottom: 4 }}>Cover Image
+          <input
+            name="coverImage"
+            type="file"
+            accept="image/*"
+            onChange={handleChange}
+            style={{ width: '100%', padding: 10, borderRadius: 6, border: '1px solid #bdbdbd', fontSize: 16, marginTop: 4 }}
+          />
+          {form.coverImage && (
+            <img src={form.coverImage} alt="Cover Preview" style={{ width: '100%', maxHeight: 180, objectFit: 'cover', marginTop: 8, borderRadius: 8, boxShadow: '0 2px 8px #0001' }} />
+          )}
+        </label>
         <label style={{ fontWeight: 500, marginBottom: 4 }}>Urgency Level
           <select name="urgencyLevel" value={form.urgencyLevel} onChange={handleChange} style={{ width: '100%', padding: 10, borderRadius: 6, border: '1px solid #bdbdbd', fontSize: 16, marginTop: 4 }}>
             <option value="">Select Urgency</option>
