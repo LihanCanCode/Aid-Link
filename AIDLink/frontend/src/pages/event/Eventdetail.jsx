@@ -109,8 +109,8 @@ const Eventdetail = () => {
     return null;
   }
 
-  const fundingPercentage = (event.currentFunding / event.fundingGoal) * 100;
-  const remainingFunding = event.fundingGoal - event.currentFunding;
+  const fundingPercentage = ((event.currentFunding || 0) / (event.fundingGoal || 1)) * 100;
+  const remainingFunding = (event.fundingGoal || 0) - (event.currentFunding || 0);
 
   return (
     <div className="min-h-screen bg-bg-light py-8">

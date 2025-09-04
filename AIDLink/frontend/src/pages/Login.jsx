@@ -78,7 +78,7 @@ const Login = () => {
                 htmlFor="email" 
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
-               Provide organizational Email Address
+                Email Address
               </label>
               <div className="relative">
                 <FaEnvelope className="absolute left-3 top-1/2 transform -translate-y-1/2 text-sm text-gray-400" />

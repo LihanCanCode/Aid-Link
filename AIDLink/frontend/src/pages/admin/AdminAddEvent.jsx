@@ -9,17 +9,18 @@ export default function AdminAddEvent() {
     description: '',
     category: '',
     isOngoing: false,
-    estimatedAffectedPeople: '',
+    estimatedAffectedPeople: null,
     severity: '',
     location: '',
     startDate: '',
     endDate: '',
     coverImage: '', // will be set to Cloudinary URL
     urgencyLevel: '',
-    fundingGoal: '',
-    currentFunding: '',
+    fundingGoal: null,
+    currentFunding: null,
   });
   const [message, setMessage] = useState('');
+  const [uploading, setUploading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = e => {
@@ -27,6 +28,8 @@ export default function AdminAddEvent() {
     if (type === 'file') {
       const file = files[0];
       if (file) {
+        setUploading(true);
+        setMessage('Uploading image...');
         uploadCoverImageToCloudinary(file);
       }
     } else {
@@ -53,34 +56,50 @@ export default function AdminAddEvent() {
       const result = await res.json();
       if (result.secure_url) {
         setForm(prev => ({ ...prev, coverImage: result.secure_url }));
+        setMessage('Image uploaded successfully!');
       } else {
         setMessage('Failed to upload image');
       }
     } catch {
       setMessage('Failed to upload image');
+    } finally {
+      setUploading(false);
     }
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
-    // Prepare payload matching Event model
+    if (uploading) {
+      setMessage('Please wait for the image to finish uploading.');
+      return;
+    }
+    // Prepare payload matching Event model types
     const payload = {
-      ...form,
       id: null, // always send null for new event
-      estimatedAffectedPeople: form.estimatedAffectedPeople === '' ? 0 : parseInt(form.estimatedAffectedPeople, 10),
-      fundingGoal: form.fundingGoal === '' ? 0 : parseInt(form.fundingGoal, 10),
-      currentFunding: form.currentFunding === '' ? 0 : parseInt(form.currentFunding, 10),
+      title: form.title || '',
+      description: form.description || '',
+      category: form.category || '',
       isOngoing: Boolean(form.isOngoing),
+      estimatedAffectedPeople: form.estimatedAffectedPeople === '' || form.estimatedAffectedPeople === null ? null : Number(form.estimatedAffectedPeople),
+      severity: form.severity || '',
+      location: form.location || '',
+      startDate: form.startDate || '',
+      endDate: form.endDate || '',
+      coverImage: form.coverImage || '',
+      urgencyLevel: form.urgencyLevel || '',
+      fundingGoal: form.fundingGoal === '' || form.fundingGoal === null ? null : Number(form.fundingGoal),
+      currentFunding: form.currentFunding === '' || form.currentFunding === null ? null : Number(form.currentFunding),
     };
     try {
+      console.log('Submitting event payload:', payload);
       const res = await fetch('https://aid-link-11.onrender.com/api/admin/events', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
       if (res.ok) {
-        setMessage('Event added successfully!');
-        setTimeout(() => navigate('/admin-dashboard'), 1500);
+        setMessage('Event added successfully! Redirecting...');
+        setTimeout(() => navigate('/admin-dashboard', { replace: true }), 1200);
       } else {
         setMessage('Failed to add event');
       }
@@ -157,7 +176,7 @@ export default function AdminAddEvent() {
         </label>
         <input name="fundingGoal" type="number" value={form.fundingGoal} onChange={handleChange} placeholder="Funding Goal" style={{ width: '100%', padding: 10, borderRadius: 6, border: '1px solid #bdbdbd', fontSize: 16 }} />
         <input name="currentFunding" type="number" value={form.currentFunding} onChange={handleChange} placeholder="Current Funding" style={{ width: '100%', padding: 10, borderRadius: 6, border: '1px solid #bdbdbd', fontSize: 16 }} />
-        <button type="submit" style={{ width: '100%', padding: 12, borderRadius: 6, background: 'linear-gradient(90deg, #1976d2 60%, #43a047 100%)', color: '#fff', border: 'none', fontWeight: 'bold', fontSize: 18, boxShadow: '0 2px 8px #0001', cursor: 'pointer', marginTop: 8, transition: 'background 0.2s' }}>Submit</button>
+  <button type="submit" disabled={uploading} style={{ width: '100%', padding: 12, borderRadius: 6, background: uploading ? '#bdbdbd' : 'linear-gradient(90deg, #1976d2 60%, #43a047 100%)', color: '#fff', border: 'none', fontWeight: 'bold', fontSize: 18, boxShadow: '0 2px 8px #0001', cursor: uploading ? 'not-allowed' : 'pointer', marginTop: 8, transition: 'background 0.2s' }}>{uploading ? 'Uploading...' : 'Submit'}</button>
         <div style={{ marginTop: 18, color: message.includes('error') ? 'red' : 'green', textAlign: 'center', fontWeight: 500 }}>{message}</div>
       </form>
     </div>

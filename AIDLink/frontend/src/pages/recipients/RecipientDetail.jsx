@@ -143,8 +143,9 @@ const RecipientDetail = () => {
         alert("Error: Please select an event to donate to.");
         return;
       }
-      const eventIdInt = parseInt(eventId);
-      if (isNaN(eventIdInt)) {
+      // Accept both string and integer eventId, but send as integer if possible
+      const eventIdInt = eventId === null || eventId === undefined || eventId === '' ? null : Number(eventId);
+      if (eventIdInt === null || isNaN(eventIdInt)) {
         throw new Error(`Invalid event ID: ${eventId}. Must be a number.`);
       }
       // Get userEmail from localStorage
@@ -153,7 +154,7 @@ const RecipientDetail = () => {
         alert("Error: You must be logged in to donate.");
         return;
       }
-  const response = await fetch(`https://aid-link-11.onrender.com/api/admin/events/${eventIdInt}/donate`, {
+      const response = await fetch(`https://aid-link-11.onrender.com/api/admin/events/${eventIdInt}/donate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -124,17 +124,35 @@ const Registration = () => {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
-  // Fetch available events
+
+
+  // Fetch available events from Render backend
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const response = await fetch('/events.json');
+        const response = await fetch('https://aidlink-backend.onrender.com/api/admin/events');
         if (response.ok) {
           const data = await response.json();
-          setEvents(data.filter(event => event.isOngoing)); // Only show ongoing events
+          console.log('All events:', data);
+          // Ensure all events have valid IDs
+          const validatedEvents = data.map(event => ({
+            ...event,
+            id: typeof event.id === 'number' ? event.id : (event._id && typeof event._id === 'number' ? event._id : null)
+          }));
+          setEvents(validatedEvents);
         }
       } catch (error) {
         console.error('Error fetching events:', error);
+        // Fallback to local events if API fails
+        try {
+          const localResponse = await fetch('/events.json');
+          if (localResponse.ok) {
+            const localData = await localResponse.json();
+            setEvents(localData);
+          }
+        } catch {
+          console.error('Error fetching local events');
+        }
       }
     };
     fetchEvents();
@@ -296,7 +314,7 @@ const Registration = () => {
       }
       const submitData = { ...formData, id: customId };
       // 1. Register the organization
-  const orgRes = await fetch('https://aid-link-11.onrender.com/api/admin/register-organization', {
+      const orgRes = await fetch('http://localhost:8080/api/admin/register-organization', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(submitData)
@@ -307,7 +325,7 @@ const Registration = () => {
 
       // 2. Register for selected events
       for (const reg of formData.eventRegistrations) {
-  await fetch(`https://aid-link-11.onrender.com/api/admin/organizations/${orgId}/register-event/${reg.eventId}`, {
+        await fetch(`http://localhost:8080/api/admin/organizations/${orgId}/register-event/${reg.eventId}`, {
           method: 'POST'
         });
       }
@@ -575,6 +593,7 @@ const Registration = () => {
                 </label>
               </div>
             </div>
+
           </div>
         );
 
@@ -1308,10 +1327,12 @@ const Registration = () => {
             ) : (
               <div className="space-y-4">
                 {events.map(event => {
-                  const isRegistered = formData.eventRegistrations?.some(reg => reg.eventId === event._id) || false;
+                  // Use integer eventId for all logic
+                  const eventId = event.id;
+                  const isRegistered = formData.eventRegistrations?.some(reg => reg.eventId === eventId) || false;
                   
                   return (
-                    <div key={event._id} className="border rounded-lg p-4">
+                    <div key={eventId} className="border rounded-lg p-4">
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex-1">
                           <h4 className="text-lg font-semibold text-gray-900">{event.title}</h4>
@@ -1333,9 +1354,10 @@ const Registration = () => {
                             type="checkbox"
                             checked={isRegistered}
                             onChange={(e) => {
-                              if (e.target.checked) {
+                              const checked = e.target.checked;
+                              if (checked) {
                                 const newRegistration = {
-                                  eventId: event._id,
+                                  eventId: eventId, // integer
                                   eventTitle: event.title,
                                   registrationDate: new Date().toISOString().split('T')[0],
                                   status: 'active',
@@ -1348,7 +1370,7 @@ const Registration = () => {
                                 };
                                 handleArrayAdd('', 'eventRegistrations', newRegistration);
                               } else {
-                                const index = formData.eventRegistrations?.findIndex(reg => reg.eventId === event._id) ?? -1;
+                                const index = formData.eventRegistrations?.findIndex(reg => reg.eventId === eventId) ?? -1;
                                 if (index !== -1) {
                                   handleArrayRemove('', 'eventRegistrations', index);
                                 }
@@ -1370,10 +1392,10 @@ const Registration = () => {
                                 Role in Response
                               </label>
                               <select
-                                value={formData.eventRegistrations?.find(reg => reg.eventId === event._id)?.role || ''}
+                                value={formData.eventRegistrations?.find(reg => reg.eventId === eventId)?.role || ''}
                                 onChange={(e) => {
                                   const updatedRegistrations = formData.eventRegistrations?.map(reg => 
-                                    reg.eventId === event._id ? { ...reg, role: e.target.value } : reg
+                                    reg.eventId === eventId ? { ...reg, role: e.target.value } : reg
                                   ) || [];
                                   setFormData(prev => ({ ...prev, eventRegistrations: updatedRegistrations }));
                                 }}
@@ -1392,10 +1414,10 @@ const Registration = () => {
                                 Response Time
                               </label>
                               <select
-                                value={formData.eventRegistrations?.find(reg => reg.eventId === event._id)?.responseTime || ''}
+                                value={formData.eventRegistrations?.find(reg => reg.eventId === eventId)?.responseTime || ''}
                                 onChange={(e) => {
                                   const updatedRegistrations = formData.eventRegistrations?.map(reg => 
-                                    reg.eventId === event._id ? { ...reg, responseTime: e.target.value } : reg
+                                    reg.eventId === eventId ? { ...reg, responseTime: e.target.value } : reg
                                   ) || [];
                                   setFormData(prev => ({ ...prev, eventRegistrations: updatedRegistrations }));
                                 }}
@@ -1415,10 +1437,10 @@ const Registration = () => {
                               </label>
                               <input
                                 type="number"
-                                value={formData.eventRegistrations?.find(reg => reg.eventId === event._id)?.estimatedBudgetAllocated || ''}
+                                value={formData.eventRegistrations?.find(reg => reg.eventId === eventId)?.estimatedBudgetAllocated || ''}
                                 onChange={(e) => {
                                   const updatedRegistrations = formData.eventRegistrations?.map(reg => 
-                                    reg.eventId === event._id ? { ...reg, estimatedBudgetAllocated: parseInt(e.target.value) || 0 } : reg
+                                    reg.eventId === eventId ? { ...reg, estimatedBudgetAllocated: parseInt(e.target.value) || 0 } : reg
                                   ) || [];
                                   setFormData(prev => ({ ...prev, eventRegistrations: updatedRegistrations }));
                                 }}
@@ -1433,10 +1455,10 @@ const Registration = () => {
                               </label>
                               <input
                                 type="number"
-                                value={formData.eventRegistrations?.find(reg => reg.eventId === event._id)?.expectedBeneficiaries || ''}
+                                value={formData.eventRegistrations?.find(reg => reg.eventId === eventId)?.expectedBeneficiaries || ''}
                                 onChange={(e) => {
                                   const updatedRegistrations = formData.eventRegistrations?.map(reg => 
-                                    reg.eventId === event._id ? { ...reg, expectedBeneficiaries: parseInt(e.target.value) || 0 } : reg
+                                    reg.eventId === eventId ? { ...reg, expectedBeneficiaries: parseInt(e.target.value) || 0 } : reg
                                   ) || [];
                                   setFormData(prev => ({ ...prev, eventRegistrations: updatedRegistrations }));
                                 }}
@@ -1452,7 +1474,7 @@ const Registration = () => {
                             </label>
                             <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                               {serviceOptions.map(service => {
-                                const currentRegistration = formData.eventRegistrations?.find(reg => reg.eventId === event._id);
+                                const currentRegistration = formData.eventRegistrations?.find(reg => String(reg.eventId) === eventId);
                                 const isServiceSelected = currentRegistration?.servicesOffered?.includes(service);
                                 
                                 return (
@@ -1462,7 +1484,7 @@ const Registration = () => {
                                       checked={isServiceSelected || false}
                                       onChange={(e) => {
                                         const updatedRegistrations = formData.eventRegistrations?.map(reg => {
-                                          if (reg.eventId === event._id) {
+                                          if (reg.eventId === eventId) {
                                             const services = reg.servicesOffered || [];
                                             if (e.target.checked) {
                                               return { ...reg, servicesOffered: [...services, service] };
@@ -1490,10 +1512,10 @@ const Registration = () => {
                               Additional Notes
                             </label>
                             <textarea
-                              value={formData.eventRegistrations.find(reg => reg.eventId === event._id)?.notes || ''}
+                              value={formData.eventRegistrations.find(reg => String(reg.eventId) === eventId)?.notes || ''}
                               onChange={(e) => {
                                 const updatedRegistrations = formData.eventRegistrations.map(reg => 
-                                  reg.eventId === event._id ? { ...reg, notes: e.target.value } : reg
+                                  String(reg.eventId) === eventId ? { ...reg, notes: e.target.value } : reg
                                 );
                                 setFormData(prev => ({ ...prev, eventRegistrations: updatedRegistrations }));
                               }}

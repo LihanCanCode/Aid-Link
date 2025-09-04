@@ -26,7 +26,7 @@ const EventCard = ({ event }) => {
     }
   };
 
-  const fundingPercentage = (event.currentFunding / event.fundingGoal) * 100;
+  const fundingPercentage = ((event.currentFunding || 0) / (event.fundingGoal || 1)) * 100;
 
   return (
     <div className="w-full h-full rounded-lg shadow-md p-4 bg-white dark:bg-gray-900 transition-shadow duration-300 flex flex-col hover:shadow-lg">
@@ -72,7 +72,7 @@ const EventCard = ({ event }) => {
           </div>
           <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
             <FiUsers className="mr-2 text-primary" />
-            <span>{formatNumber(event.estimatedAffectedPeople)} people affected</span>
+            <span>{formatNumber(event.estimatedAffectedPeople || 0)} people affected</span>
           </div>
           <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
             <FiCalendar className="mr-2 text-primary" />
