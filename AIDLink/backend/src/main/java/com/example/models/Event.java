@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 
 public class Event {
     @Id
-    private Integer id;
+    private String id;
     private String title;
     private String description;
     private String category;
@@ -30,8 +30,8 @@ public class Event {
     private int currentFunding;
 
     // Getters and Setters
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }

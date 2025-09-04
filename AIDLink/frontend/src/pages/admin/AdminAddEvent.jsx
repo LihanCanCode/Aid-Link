@@ -1,27 +1,45 @@
-
+/* eslint-disable no-unused-vars */
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function AdminAddEvent() {
   const [form, setForm] = useState({
+    id: null, // Integer, let backend generate if null
     title: '',
     description: '',
     category: '',
+    isOngoing: false, // boolean
+    estimatedAffectedPeople: '', // will convert to int on submit
+    severity: '',
     location: '',
     startDate: '',
     endDate: '',
-    severity: '',
-    isOngoing: false,
-    estimatedAffectedPeople: '',
     coverImage: '',
     urgencyLevel: '',
-    fundingGoal: '',
-    currentFunding: '',
+    fundingGoal: '', // will convert to int on submit
+    currentFunding: '', // will convert to int on submit
   });
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
-  // Cloudinary config
+  const handleChange = e => {
+    const { name, value, type, checked, files } = e.target;
+    if (type === 'file') {
+      const file = files[0];
+      if (file) {
+        uploadCoverImageToCloudinary(file);
+      }
+    } else {
+      setForm({
+        ...form,
+        [name]: type === 'checkbox' ? checked : value
+      });
+    }
+
+    // ...existing code...
+  };
+
+  // Cloudinary config (replace with your values)
   const CLOUDINARY_URL = 'https://api.cloudinary.com/v1_1/dqxcgemok/upload';
   const CLOUDINARY_UPLOAD_PRESET = 'AIDlink demo';
 
@@ -45,28 +63,22 @@ export default function AdminAddEvent() {
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value, type, checked, files } = e.target;
-    if (type === 'file') {
-      const file = files[0];
-      if (file) {
-        uploadCoverImageToCloudinary(file);
-      }
-    } else {
-      setForm({
-        ...form,
-        [name]: type === 'checkbox' ? checked : value
-      });
-    }
-  };
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
+    // Prepare payload matching Event model
+    const payload = {
+      ...form,
+      id: null, // always send null for new event
+      estimatedAffectedPeople: form.estimatedAffectedPeople === '' ? 0 : parseInt(form.estimatedAffectedPeople, 10),
+      fundingGoal: form.fundingGoal === '' ? 0 : parseInt(form.fundingGoal, 10),
+      currentFunding: form.currentFunding === '' ? 0 : parseInt(form.currentFunding, 10),
+      isOngoing: Boolean(form.isOngoing),
+    };
     try {
       const res = await fetch('https://aid-link-11.onrender.com/api/admin/events', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
+        body: JSON.stringify(payload)
       });
       if (res.ok) {
         setMessage('Event added successfully!');
